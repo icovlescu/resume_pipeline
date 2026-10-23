@@ -10,6 +10,11 @@ Status: research and design. No pipeline code yet.
   profiles, daily top 10, decision log.
 - [docs/reference-repos.md](docs/reference-repos.md): the five public repos we
   learn from and what to take from each.
+- [docs/pages/pipeline-mockup.html](docs/pages/pipeline-mockup.html): clickable
+  mockup of the daily top 10, evidence-backed tailoring and per-role decisions
+  (sample data). Open it in a browser.
+- [docs/pages/reference-repos.html](docs/pages/reference-repos.html): the repo
+  comparison as a page.
 
 ## Reference repos
 The repos are kept as context, not vendored. To read them locally:
