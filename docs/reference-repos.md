@@ -6,6 +6,12 @@ commits live in [`references/repos.tsv`](../references/repos.tsv) and
 `scripts/fetch_references.sh` clones them into the gitignored
 `references/vendor/` folder for reading.
 
+Forks under `icovlescu`: [career-ops](https://github.com/icovlescu/career-ops),
+[ai-job-search](https://github.com/icovlescu/ai-job-search),
+[Resume-Matcher](https://github.com/icovlescu/Resume-Matcher) and
+[JobSpy](https://github.com/icovlescu/JobSpy). job-ops is not forked because
+of its Commons Clause license.
+
 | # | Repo | Stars | License | Stack | Covers |
 |---|------|------:|---------|-------|--------|
 | 1 | [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops) | 76.7k | MIT | Node, Markdown prompts, agent CLI | Scan, score 1-5, archetypes, tailor, fact gates, tracker |

@@ -18,4 +18,6 @@ The repos are kept as context, not vendored. To read them locally:
 ./scripts/fetch_references.sh   # clones into references/vendor/ (gitignored)
 ```
 
-Pinned commits are in [references/repos.tsv](references/repos.tsv).
+Pinned commits, upstream URLs and our forks are in
+[references/repos.tsv](references/repos.tsv). The script clones from the fork
+when there is one and adds upstream as a second remote.
