@@ -1,0 +1,6 @@
+# name	url	pinned_commit	license	role
+career-ops	https://github.com/career-ops-hq/career-ops	56f26709bb804a9e78ef53db24618dd0a7a7bea2	MIT	evaluation, archetypes, fact gates, tracker
+ai-job-search	https://github.com/ai-job-search-dev/ai-job-search	e16acee3abdaae57f8026789338a3c6eebf4608b	MIT	profile setup from CV/LinkedIn, drafter-reviewer, outcomes
+Resume-Matcher	https://github.com/srbhr/Resume-Matcher	f6296a5e6a31c9d616620143688cc909623c542f	Apache-2.0	master resume tailoring, skill verification, ATS check
+JobSpy	https://github.com/speedyapply/JobSpy	a606f9cf077c34f6ce6cbfcc76238f57b3c20671	MIT	job scraping library (LinkedIn, Indeed, Glassdoor, ...)
+job-ops	https://github.com/DaKheera47/job-ops	4a5e52b76a729aa2f57e4e9171216cf9621140a0	Commons Clause	self-hosted search, score, tailor, track UI

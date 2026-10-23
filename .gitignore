@@ -1,0 +1,4 @@
+references/vendor/
+.env
+__pycache__/
+.venv/
