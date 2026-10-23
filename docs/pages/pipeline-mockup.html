@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>Resume Pipeline Mockup</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: app shell. Pipeline strip on top, then today's ranked list beside the selected role's evidence, CV and decision; ledger and decision log below */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#EBEEF3; --fg:#16202A; --muted:#5A6775; --line:#DCE1E7;
+  --accent:#2C49D1; --accent-fg:#FFFFFF; --accent-soft:#E6EAFB;
+  --ok:#1C7A4E; --ok-bg:#E3F3EA; --warn:#9A6410; --warn-bg:#FBF0DC; --bad:#B03A2E; --bad-bg:#FBE6E3;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F141A; --surface:#161D25; --sunk:#1B232C; --fg:#E6EBF0; --muted:#97A3B0; --line:#27313C;
+  --accent:#8EA2FF; --accent-fg:#0F141A; --accent-soft:#1D2547;
+  --ok:#6FD3A0; --ok-bg:#14301F; --warn:#F0C06A; --warn-bg:#33270F; --bad:#F2928A; --bad-bg:#3A1A17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141A; --surface:#161D25; --sunk:#1B232C; --fg:#E6EBF0; --muted:#97A3B0; --line:#27313C;
+  --accent:#8EA2FF; --accent-fg:#0F141A; --accent-soft:#1D2547;
+  --ok:#6FD3A0; --ok-bg:#14301F; --warn:#F0C06A; --warn-bg:#33270F; --bad:#F2928A; --bad-bg:#3A1A17; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14.5px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:24px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:clamp(24px,3.4vw,32px)} h2{font-size:19px} h3{font-size:15px;font-family:var(--body);font-weight:600}
+p{margin:0}
+.label{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+button,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px}
+.sample{font-size:12.5px;background:var(--warn-bg);color:var(--warn);padding:4px 10px;border-radius:999px;font-weight:600}
+/* pipeline strip */
+.strip{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:flex;gap:8px;align-items:baseline}
+.step b{font-family:var(--mono);font-weight:500;color:var(--accent)}
+.arrow{color:var(--muted)}
+/* profiles */
+.profiles{display:flex;flex-wrap:wrap;gap:8px}
+.pf{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;display:flex;gap:6px;align-items:center}
+.pf[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.pf .n{font-family:var(--mono);font-size:11.5px;opacity:.75}
+/* main grid */
+.main{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.list{display:grid}
+.job{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:12px 14px;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;width:100%}
+.job:last-child{border-bottom:0}
+.job[aria-current="true"]{background:var(--accent-soft)}
+.job .rk{font-family:var(--display);font-weight:700;font-size:18px;color:var(--accent)}
+.job .t{font-weight:600;line-height:1.3}
+.job .c{font-size:12.5px;color:var(--muted)}
+.job .r{font-size:12.5px;color:var(--muted);margin-top:4px}
+.score{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;text-align:right}
+.status{display:inline-block;margin-top:4px;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px}
+.s-pending{background:var(--sunk);color:var(--muted)} .s-apply{background:var(--ok-bg);color:var(--ok)} .s-skip{background:var(--bad-bg);color:var(--bad)} .s-later{background:var(--warn-bg);color:var(--warn)}
+.detail{padding:20px;display:grid;gap:22px;min-width:0}
+.dh{display:grid;gap:6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;font-size:12.5px}
+.tag{background:var(--sunk);border-radius:6px;padding:2px 8px}
+.tag.accent{background:var(--accent-soft);color:var(--accent);font-weight:600}
+/* requirement mapping */
+.req{display:grid;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rq{display:grid;grid-template-columns:minmax(0,180px) 120px minmax(0,1fr);gap:12px;padding:10px 12px;border-bottom:1px solid var(--line);align-items:start}
+.rq:last-child{border-bottom:0}
+@media (max-width:620px){.rq{grid-template-columns:1fr}}
+.rq .sk{font-weight:600}
+.pill{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;justify-self:start;white-space:nowrap}
+.p-verified{background:var(--ok-bg);color:var(--ok)} .p-supported{background:var(--warn-bg);color:var(--warn)} .p-confirmed{background:var(--ok-bg);color:var(--ok)} .p-gap{background:var(--bad-bg);color:var(--bad)}
+.ev{font-size:13px;color:var(--muted);display:grid;gap:6px}
+.ev q{font-style:italic;color:var(--fg)}
+.mini{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:3px 9px;font-size:12.5px;justify-self:start}
+.mini.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+/* cv preview */
+.cv{background:var(--sunk);border-radius:10px;padding:16px;display:grid;gap:10px;font-size:13.5px}
+.cv .hd{font-family:var(--display);font-size:17px;font-weight:700}
+.cv ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.src{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-left:6px;white-space:nowrap}
+.gate{font-size:12.5px;display:flex;gap:8px;align-items:center}
+.gate .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+/* decision */
+.decide{display:grid;gap:12px;border-top:1px solid var(--line);padding-top:18px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:600}
+.choice[aria-pressed="true"][data-v="apply"]{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.choice[aria-pressed="true"][data-v="skip"]{background:var(--bad-bg);color:var(--bad);border-color:var(--bad)}
+.choice[aria-pressed="true"][data-v="later"]{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+textarea{width:100%;min-height:76px;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.record{background:var(--accent);color:var(--accent-fg);border:0;border-radius:8px;padding:9px 16px;font-weight:600}
+.record:disabled{opacity:.45;cursor:not-allowed}
+.hint{font-size:12.5px;color:var(--muted)}
+.saved{font-size:13px;color:var(--ok);font-weight:600}
+/* lower */
+.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.lower{grid-template-columns:1fr}}
+.lower .panel{padding:18px;display:grid;gap:12px;min-width:0}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.log{display:grid;gap:10px}
+.entry{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:4px;font-size:13px}
+.entry pre{margin:0;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted)}
+.empty{color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:8px;padding:14px}
+@media (prefers-reduced-motion: no-preference){.job,.choice,.pf{transition:background .15s,color .15s,border-color .15s}}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div style="display:grid;gap:4px">
+      <span class="label" id="today">Daily digest</span>
+      <h1>Today's top 10 roles</h1>
+    </div>
+    <span class="sample">Mockup with sample jobs and skills, not your data</span>
+  </div>
+
+  <div class="strip" aria-label="Pipeline steps">
+    <span class="step"><b>1</b>Sources: JobSpy, pasted JDs, uploads</span><span class="arrow">→</span>
+    <span class="step"><b>2</b>Rank per profile, score + reason</span><span class="arrow">→</span>
+    <span class="step"><b>3</b>Tailor from skills ledger only</span><span class="arrow">→</span>
+    <span class="step"><b>4</b>Fact gate</span><span class="arrow">→</span>
+    <span class="step"><b>5</b>Your decision + rationale</span>
+  </div>
+
+  <div class="profiles" id="profiles" role="group" aria-label="Filter by profile"></div>
+
+  <div class="main">
+    <div class="panel list" id="list" aria-label="Ranked roles"></div>
+    <div class="panel detail" id="detail"></div>
+  </div>
+
+  <div class="lower">
+    <section class="panel" aria-labelledby="ledger-h">
+      <h2 id="ledger-h">Skills ledger</h2>
+      <p class="hint">The only place the CV generator reads skills from. Feedback-backed skills need your confirmation before they can appear.</p>
+      <div class="tbl"><table><thead><tr><th>Skill</th><th>Status</th><th>Evidence</th></tr></thead><tbody id="ledger"></tbody></table></div>
+    </section>
+    <section class="panel" aria-labelledby="log-h">
+      <h2 id="log-h">Decision log</h2>
+      <p class="hint">Append-only. Each entry is what gets written to <code style="font-family:var(--mono)">data/decisions.jsonl</code>.</p>
+      <div class="log" id="log"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const PROFILES = [
+  {id:"lead-da", name:"Lead, Data Analytics"},
+  {id:"ds", name:"Data Scientist"},
+  {id:"builder", name:"Product Builder"},
+  {id:"mgr-dsa", name:"Manager, Data Science & Analytics"},
+];
+// status: verified (CV/LinkedIn), supported (Q&A or feedback, awaiting your confirmation), gap (no evidence, never used)
+const LEDGER = {
+  "SQL":{status:"verified",src:"cv",quote:"Owned the analytics warehouse in SQL across 40+ models"},
+  "Python":{status:"verified",src:"cv",quote:"Built churn and demand models in Python (pandas, scikit-learn)"},
+  "A/B testing":{status:"verified",src:"linkedin",quote:"Ran the experimentation programme, 30+ tests per quarter"},
+  "Team leadership":{status:"verified",src:"linkedin",quote:"Led a team of 8 analysts and data scientists"},
+  "Stakeholder management":{status:"verified",src:"cv",quote:"Weekly KPI reviews with the exec team"},
+  "Looker":{status:"verified",src:"cv",quote:"Rolled out Looker to 200 business users"},
+  "Hiring":{status:"verified",src:"linkedin",quote:"Hired 5 analysts in 2024"},
+  "dbt":{status:"supported",src:"qa",quote:"Q&A 14 Oct: \"Migrated our transformation layer to dbt in 2023\""},
+  "Causal inference":{status:"supported",src:"feedback",quote:"Manager review 2025: \"strong on causal impact analysis for pricing\""},
+  "Product discovery":{status:"supported",src:"feedback",quote:"Peer feedback: \"ran discovery interviews for the self-serve tool\""},
+  "Roadmapping":{status:"supported",src:"qa",quote:"Q&A 18 Oct: \"Owned the data platform roadmap for 2 years\""},
+  "Spark":{status:"gap"}, "Kubernetes":{status:"gap"}, "Deep learning":{status:"gap"}, "Pricing domain":{status:"gap"}, "React":{status:"gap"},
+};
+const SRC_LABEL = {cv:"CV", linkedin:"LinkedIn", qa:"Your answer", feedback:"Feedback"};
+const JOBS = [
+  {id:"li-4021337",t:"Head of Data Analytics",c:"Northwind Analytics",l:"Remote, EU",src:"LinkedIn",p:"lead-da",s:92,why:"Leads a team of 6, Looker stack, experimentation focus",req:["Team leadership","SQL","Looker","A/B testing","Stakeholder management","dbt"]},
+  {id:"in-88213",t:"Manager, Data Science & Analytics",c:"Helio Health",l:"Amsterdam, hybrid",src:"Indeed",p:"mgr-dsa",s:89,why:"Mixed DS + analytics team, hiring plan for 2027",req:["Team leadership","Hiring","Python","Causal inference","Stakeholder management"]},
+  {id:"gd-55120",t:"Senior Data Scientist, Pricing",c:"Lumen Pay",l:"Berlin",src:"Glassdoor",p:"ds",s:84,why:"Causal pricing work matches feedback; pricing domain is a gap",req:["Python","Causal inference","A/B testing","Pricing domain","SQL"]},
+  {id:"jd-paste-01",t:"Data Product Lead",c:"Fernway Logistics",l:"Remote",src:"Pasted JD",p:"builder",s:81,why:"Owns an internal data product end to end",req:["Product discovery","Roadmapping","SQL","Stakeholder management","React"]},
+  {id:"li-4019920",t:"Analytics Lead",c:"Quanta Retail",l:"London",src:"LinkedIn",p:"lead-da",s:79,why:"Strong BI fit, smaller team than you have led",req:["SQL","Looker","Stakeholder management","dbt"]},
+  {id:"in-88702",t:"Lead Data Scientist",c:"Tessel Bio",l:"Copenhagen",src:"Indeed",p:"ds",s:74,why:"Modelling fit; asks for deep learning you have no evidence for",req:["Python","Deep learning","Team leadership","A/B testing"]},
+  {id:"li-4022101",t:"Director of Analytics",c:"Marlow Insurance",l:"Dublin",src:"LinkedIn",p:"mgr-dsa",s:72,why:"One level up in seniority; leadership evidence is strong",req:["Team leadership","Hiring","Stakeholder management","Roadmapping"]},
+  {id:"upload-02",t:"Founding Data Lead",c:"Kitebase",l:"Remote",src:"Uploaded requirements",p:"builder",s:70,why:"Builder role at seed stage; Spark is listed as nice-to-have",req:["SQL","Python","Product discovery","Spark"]},
+  {id:"gd-55301",t:"Experimentation Lead",c:"Brightloop",l:"Remote, EU",src:"Glassdoor",p:"ds",s:68,why:"Narrow scope; strong A/B evidence",req:["A/B testing","Causal inference","Python","SQL"]},
+  {id:"li-4023555",t:"Data Platform Manager",c:"Okapi Mobility",l:"Munich",src:"LinkedIn",p:"mgr-dsa",s:63,why:"Platform-heavy; Kubernetes and Spark are gaps",req:["Team leadership","dbt","Spark","Kubernetes"]},
+];
+
+const state = {filter:"all", sel:JOBS[0].id, confirmed:{}, draft:{}, decisions:[]};
+try{ const s = JSON.parse(localStorage.getItem("rp-mock")||"null"); if(s){state.confirmed=s.confirmed||{};state.decisions=s.decisions||[];} }catch(e){}
+function persist(){ try{ localStorage.setItem("rp-mock", JSON.stringify({confirmed:state.confirmed,decisions:state.decisions})); }catch(e){} }
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const pname = id => PROFILES.find(p=>p.id===id).name;
+const lastDecision = jid => [...state.decisions].reverse().find(d=>d.job_id===jid);
+function skillState(sk){
+  const e = LEDGER[sk] || {status:"gap"};
+  if(e.status==="supported" && state.confirmed[sk]) return "confirmed";
+  return e.status;
+}
+
+$("today").textContent = "Daily digest · " + new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
+
+function renderProfiles(){
+  const counts = {}; JOBS.forEach(j=>counts[j.p]=(counts[j.p]||0)+1);
+  const all = [{id:"all",name:"All profiles",n:JOBS.length}, ...PROFILES.map(p=>({...p,n:counts[p.id]||0}))];
+  $("profiles").innerHTML = all.map(p=>`<button class="pf" data-id="${p.id}" aria-pressed="${state.filter===p.id}">${esc(p.name)} <span class="n">${p.n}</span></button>`).join("");
+}
+function renderList(){
+  const rows = JOBS.map((j,i)=>({...j,rank:i+1})).filter(j=>state.filter==="all"||j.p===state.filter);
+  $("list").innerHTML = rows.map(j=>{
+    const d = lastDecision(j.id); const st = d? d.decision : "pending";
+    return `<button class="job" data-id="${j.id}" aria-current="${state.sel===j.id}">
+      <span class="rk">${j.rank}</span>
+      <span><span class="t">${esc(j.t)}</span><br><span class="c">${esc(j.c)} · ${esc(j.l)} · ${esc(pname(j.p))}</span>
+        <span class="r" style="display:block">${esc(j.why)}</span>
+        <span class="status s-${st}">${st==="pending"?"Needs your decision":st[0].toUpperCase()+st.slice(1)}</span></span>
+      <span class="score">${j.s}<span class="muted">/100</span></span></button>`;
+  }).join("") || `<p class="empty" style="margin:14px">No roles for this profile today.</p>`;
+}
+function renderDetail(){
+  const j = JOBS.find(x=>x.id===state.sel);
+  const d = state.draft[j.id] || (state.draft[j.id] = {decision:null, rationale:""});
+  const rows = j.req.map(sk=>{
+    const st = skillState(sk), e = LEDGER[sk]||{};
+    let pill, ev;
+    if(st==="verified"){ pill=`<span class="pill p-verified">Verified</span>`; ev=`<span><q>${esc(e.quote)}</q> <span class="src">${SRC_LABEL[e.src]}</span></span>`; }
+    else if(st==="confirmed"){ pill=`<span class="pill p-confirmed">Confirmed by you</span>`; ev=`<span><q>${esc(e.quote)}</q> <span class="src">${SRC_LABEL[e.src]}</span></span><button class="mini" data-unconfirm="${esc(sk)}">Undo confirmation</button>`; }
+    else if(st==="supported"){ pill=`<span class="pill p-supported">Backed by ${SRC_LABEL[e.src].toLowerCase()}</span>`; ev=`<span><q>${esc(e.quote)}</q> <span class="src">${SRC_LABEL[e.src]}</span></span><button class="mini primary" data-confirm="${esc(sk)}">Confirm I have this</button>`; }
+    else { pill=`<span class="pill p-gap">Gap</span>`; ev=`<span>No evidence in CV, LinkedIn, answers or feedback. It stays out of the CV.</span><button class="mini" data-ask="${esc(sk)}">Answer an experience question</button>`; }
+    return `<div class="rq"><span class="sk">${esc(sk)}</span>${pill}<div class="ev">${ev}</div></div>`;
+  }).join("");
+  const usable = j.req.filter(sk=>["verified","confirmed"].includes(skillState(sk)));
+  const held = j.req.filter(sk=>skillState(sk)==="supported");
+  const gaps = j.req.filter(sk=>skillState(sk)==="gap");
+  const bullets = usable.map(sk=>`<li>${esc(LEDGER[sk].quote.replace(/^Q&A[^:]*: "|^[^:]*review[^:]*: "|^Peer feedback: "|"$/g,""))}<span class="src">${esc(sk)} · ${SRC_LABEL[LEDGER[sk].src]}</span></li>`).join("");
+  const prev = lastDecision(j.id);
+  $("detail").innerHTML = `
+    <div class="dh">
+      <span class="label">${esc(j.src)} · ${esc(j.id)}</span>
+      <h2>${esc(j.t)}, ${esc(j.c)}</h2>
+      <div class="tags"><span class="tag accent">Profile: ${esc(pname(j.p))}</span><span class="tag">${esc(j.l)}</span><span class="tag">Score ${j.s}/100</span></div>
+      <p class="muted">${esc(j.why)}</p>
+    </div>
+    <section style="display:grid;gap:10px"><h3>Requirements against your evidence</h3><div class="req">${rows}</div></section>
+    <section style="display:grid;gap:10px">
+      <h3>Tailored CV preview</h3>
+      <div class="cv">
+        <div class="hd">${esc(pname(j.p))}</div>
+        <ul>${bullets}</ul>
+        <div class="gate"><span class="dot"></span>Fact gate passed: ${usable.length} skills, each traced to a source.</div>
+        ${held.length?`<div class="hint">Held back until you confirm: ${held.map(esc).join(", ")}.</div>`:""}
+        ${gaps.length?`<div class="hint">Not in CV (no evidence): ${gaps.map(esc).join(", ")}.</div>`:""}
+      </div>
+    </section>
+    <section class="decide" aria-labelledby="dec-h">
+      <h3 id="dec-h">Apply to this role with this CV?</h3>
+      ${prev?`<p class="hint">Last decision: <b>${prev.decision}</b> on ${new Date(prev.decided_at).toLocaleString()}. Record again to change it.</p>`:""}
+      <div class="choices" role="group" aria-label="Decision">
+        ${[["apply","Apply"],["skip","Skip"],["later","Decide later"]].map(([v,l])=>`<button class="choice" data-v="${v}" aria-pressed="${d.decision===v}">${l}</button>`).join("")}
+      </div>
+      <label for="rationale" class="hint">Why? This is stored with the decision and used to rank tomorrow's roles.</label>
+      <textarea id="rationale" placeholder="e.g. Good leadership fit and remote; salary band is below my floor but worth a first call.">${esc(d.rationale)}</textarea>
+      <div class="row"><button class="record" id="record" ${d.decision&&d.rationale.trim()?"":"disabled"}>Record decision</button>
+        <span class="hint" id="rec-hint">${d.decision?(d.rationale.trim()?"":"Add a rationale to record."):"Pick a decision and add a rationale."}</span></div>
+    </section>`;
+}
+function renderLedger(){
+  $("ledger").innerHTML = Object.entries(LEDGER).map(([sk,e])=>{
+    const st = skillState(sk);
+    const lab = {verified:"Verified",confirmed:"Confirmed by you",supported:"Awaiting confirmation",gap:"Gap, never used"}[st];
+    return `<tr><td>${esc(sk)}</td><td><span class="pill p-${st}">${lab}</span></td><td class="muted">${e.quote?esc(SRC_LABEL[e.src])+": "+esc(e.quote):"None"}</td></tr>`;
+  }).join("");
+}
+function renderLog(){
+  if(!state.decisions.length){ $("log").innerHTML = `<p class="empty">No decisions yet. Pick a role above, choose Apply, Skip or Decide later, and add your reason.</p>`; return; }
+  $("log").innerHTML = [...state.decisions].reverse().map(d=>{
+    const j = JOBS.find(x=>x.id===d.job_id);
+    return `<div class="entry"><div><span class="status s-${d.decision}">${d.decision}</span> <b>${esc(j.t)}</b>, ${esc(j.c)}</div>
+      <div class="muted">${esc(d.rationale)}</div><pre>${esc(JSON.stringify(d,null,2))}</pre></div>`;
+  }).join("");
+}
+function renderAll(){ renderProfiles(); renderList(); renderDetail(); renderLedger(); renderLog(); }
+
+document.addEventListener("click", ev=>{
+  const t = ev.target.closest("button"); if(!t) return;
+  if(t.classList.contains("pf")){ state.filter=t.dataset.id; const first=JOBS.find(j=>state.filter==="all"||j.p===state.filter); if(first) state.sel=first.id; renderAll(); return; }
+  if(t.classList.contains("job")){ state.sel=t.dataset.id; renderList(); renderDetail(); if(window.innerWidth<860) $("detail").scrollIntoView({behavior:"smooth",block:"start"}); return; }
+  if(t.dataset.confirm){ state.confirmed[t.dataset.confirm]=new Date().toISOString(); persist(); renderDetail(); renderLedger(); return; }
+  if(t.dataset.unconfirm){ delete state.confirmed[t.dataset.unconfirm]; persist(); renderDetail(); renderLedger(); return; }
+  if(t.dataset.ask){ const box=t.parentElement; box.innerHTML=`<span>In the real pipeline you'd be asked: <q>Tell me about a time you used ${esc(t.dataset.ask)}. What did you build and what changed?</q> Your answer becomes evidence, and you confirm it before it's used.</span>`; return; }
+  if(t.classList.contains("choice")){ state.draft[state.sel].decision=t.dataset.v; renderDetail(); return; }
+  if(t.id==="record"){
+    const j = JOBS.find(x=>x.id===state.sel), d = state.draft[j.id];
+    const fromFeedback = j.req.filter(sk=>skillState(sk)==="confirmed");
+    state.decisions.push({job_id:j.id, profile_id:j.p, cv_version:`cv/${j.p}/${new Date().toISOString().slice(0,10)}-${j.c.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.pdf`, decision:d.decision, rationale:d.rationale.trim(), skills_added_from_feedback:fromFeedback, decided_at:new Date().toISOString()});
+    state.draft[j.id]={decision:null,rationale:""};
+    persist(); renderList(); renderDetail(); renderLog();
+    const h=$("rec-hint"); if(h){h.className="saved";h.textContent="Decision recorded in the log below.";}
+  }
+});
+document.addEventListener("input", ev=>{
+  if(ev.target.id!=="rationale") return;
+  const d = state.draft[state.sel]; d.rationale = ev.target.value;
+  const ok = d.decision && d.rationale.trim();
+  $("record").disabled = !ok;
+  $("rec-hint").textContent = d.decision ? (d.rationale.trim()?"":"Add a rationale to record.") : "Pick a decision and add a rationale.";
+});
+renderAll();
+</script>
+
+</body>
+</html>

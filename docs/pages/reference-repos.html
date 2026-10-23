@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>Resume Pipeline Reference Repos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column, a full-width capability matrix, then a card per repo in rank order */
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --fg:#16202A; --muted:#5A6775; --line:#DCE1E7;
+  --accent:#2C49D1; --accent-soft:#E6EAFB;
+  --yes:#1C7A4E; --yes-bg:#E3F3EA; --part:#9A6410; --part-bg:#FBF0DC; --no:#7D8793; --no-bg:#EEF0F3;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F141A; --surface:#161D25; --fg:#E6EBF0; --muted:#97A3B0; --line:#26303B;
+  --accent:#8EA2FF; --accent-soft:#1D2547;
+  --yes:#6FD3A0; --yes-bg:#14301F; --part:#F0C06A; --part-bg:#33270F; --no:#8A949F; --no-bg:#1E252D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141A; --surface:#161D25; --fg:#E6EBF0; --muted:#97A3B0; --line:#26303B;
+  --accent:#8EA2FF; --accent-soft:#1D2547;
+  --yes:#6FD3A0; --yes-bg:#14301F; --part:#F0C06A; --part-bg:#33270F; --no:#8A949F; --no-bg:#1E252D; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:40px}
+header{display:grid;gap:10px;max-width:68ch}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,4.4vw,42px);font-weight:700}
+h2{font-size:22px;font-weight:700}
+h3{font-size:19px;font-weight:700}
+p{margin:0}
+.lede{color:var(--muted);font-size:16px}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section{display:grid;gap:16px}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:820px;font-size:13.5px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tbody tr:last-child td{border-bottom:0}
+td.repo{font-weight:600;white-space:nowrap}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.y{color:var(--yes);background:var(--yes-bg)} .p{color:var(--part);background:var(--part-bg)} .n{color:var(--no);background:var(--no-bg)}
+.note{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.35}
+.legend{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:13px;align-items:center}
+.cards{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;grid-template-columns:56px 1fr;gap:16px}
+.rank{font-family:var(--display);font-size:34px;font-weight:700;color:var(--accent);line-height:1}
+.card-body{display:grid;gap:10px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.verdict{font-weight:600}
+ul{margin:0;padding-left:18px;display:grid;gap:4px}
+code{font-family:var(--mono);font-size:12.5px;background:var(--accent-soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.reco{background:var(--accent-soft);border-radius:10px;padding:20px;display:grid;gap:10px}
+.also{display:grid;gap:6px;color:var(--muted)}
+@media (max-width:560px){.card{grid-template-columns:1fr;gap:8px}.rank{font-size:26px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Research · checked 23 Oct 2026</span>
+    <h1>Five open-source job pipelines to learn from</h1>
+    <p class="lede">Ranked by GitHub stars among repos that find jobs or take a job description and then tailor a CV. They are referenced from <a href="https://github.com/icovlescu/resume_pipeline/tree/claude/project-thread-rf9qgv">resume_pipeline</a> at pinned commits, not copied in.</p>
+  </header>
+
+  <section aria-labelledby="matrix">
+    <h2 id="matrix">What each one covers of your pipeline</h2>
+    <div class="legend"><span class="chip y">Yes</span><span class="chip p">Partial</span><span class="chip n">No</span><span>Columns follow your requirements.</span></div>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Repo</th><th>Stars</th><th>Find jobs</th><th>Paste / upload JD</th><th>CV + LinkedIn import</th><th>Experience Q&amp;A</th><th>Feedback loop</th><th>Multiple profiles</th><th>No invented skills</th><th>Decision + rationale</th></tr></thead>
+        <tbody>
+          <tr><td class="repo">career-ops</td><td class="num">76.7k</td>
+            <td><span class="chip y">Yes</span><span class="note">Public ATS APIs, no LinkedIn</span></td>
+            <td><span class="chip y">Yes</span></td>
+            <td><span class="chip p">Partial</span><span class="note">cv.md; LinkedIn only for contacts</span></td>
+            <td><span class="chip p">Partial</span><span class="note">Onboarding</span></td>
+            <td><span class="chip y">Yes</span><span class="note">outcome + learn ledger</span></td>
+            <td><span class="chip y">Yes</span><span class="note">Archetypes</span></td>
+            <td><span class="chip y">Yes</span><span class="note">Fact gates</span></td>
+            <td><span class="chip p">Partial</span><span class="note">Tracker status, lessons ledger</span></td></tr>
+          <tr><td class="repo">ai-job-search</td><td class="num">63.7k</td>
+            <td><span class="chip p">Partial</span><span class="note">Danish boards</span></td>
+            <td><span class="chip y">Yes</span></td>
+            <td><span class="chip y">Yes</span><span class="note">CV + LinkedIn PDF</span></td>
+            <td><span class="chip y">Yes</span><span class="note">Interview mode</span></td>
+            <td><span class="chip y">Yes</span><span class="note">/outcome</span></td>
+            <td><span class="chip p">Partial</span><span class="note">Positioning per role</span></td>
+            <td><span class="chip y">Yes</span><span class="note">Grounding audit</span></td>
+            <td><span class="chip n">No</span></td></tr>
+          <tr><td class="repo">Resume-Matcher</td><td class="num">28.8k</td>
+            <td><span class="chip n">No</span></td>
+            <td><span class="chip y">Yes</span></td>
+            <td><span class="chip p">Partial</span><span class="note">PDF/DOCX resume</span></td>
+            <td><span class="chip p">Partial</span><span class="note">Enrichment wizard</span></td>
+            <td><span class="chip n">No</span></td>
+            <td><span class="chip p">Partial</span><span class="note">One master resume</span></td>
+            <td><span class="chip y">Yes</span><span class="note">Prompts + skill verification</span></td>
+            <td><span class="chip n">No</span></td></tr>
+          <tr><td class="repo">JobSpy</td><td class="num">4.5k</td>
+            <td><span class="chip y">Yes</span><span class="note">LinkedIn, Indeed, Glassdoor +5</span></td>
+            <td><span class="chip n">No</span></td><td><span class="chip n">No</span></td><td><span class="chip n">No</span></td><td><span class="chip n">No</span></td><td><span class="chip n">No</span></td><td><span class="chip n">No</span></td><td><span class="chip n">No</span></td></tr>
+          <tr><td class="repo">job-ops</td><td class="num">4.1k</td>
+            <td><span class="chip y">Yes</span><span class="note">13 boards incl. LinkedIn</span></td>
+            <td><span class="chip y">Yes</span></td>
+            <td><span class="chip p">Partial</span></td>
+            <td><span class="chip n">No</span></td>
+            <td><span class="chip p">Partial</span><span class="note">Gmail status tracking</span></td>
+            <td><span class="chip p">Partial</span></td>
+            <td><span class="chip p">Partial</span><span class="note">Prompt rules</span></td>
+            <td><span class="chip n">No</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="font-size:14px">None of them stores an explicit per-role apply/skip decision with your rationale. That part is ours to build.</p>
+  </section>
+
+  <section aria-labelledby="each">
+    <h2 id="each">What to take from each</h2>
+    <div class="cards">
+      <article class="card"><div class="rank">1</div><div class="card-body">
+        <h3><a href="https://github.com/career-ops-hq/career-ops">career-ops-hq/career-ops</a></h3>
+        <div class="meta"><span>76.7k stars</span><span>MIT</span><span>Node + Markdown prompts, any agent CLI</span></div>
+        <p class="verdict">Study closely. Closest to your idea, strongest truthfulness checks.</p>
+        <ul>
+          <li><code>modes/_shared.md</code> detects a role archetype against your own target-role table. Same idea as your profiles.</li>
+          <li><code>jd-skill-gap.mjs</code> sorts JD skills into existing, supported by resume, or gap, and never adds any automatically.</li>
+          <li><code>verify-cv-facts.mjs</code> and <code>story-provenance-check.mjs</code> trace every claim in a generated CV back to your own files.</li>
+          <li><code>rank-pipeline.mjs</code> gives each job a score and a reason and never hides rows.</li>
+          <li><code>learn.mjs</code> only changes your rules after you approve, and keeps your reply in a ledger.</li>
+        </ul></div></article>
+
+      <article class="card"><div class="rank">2</div><div class="card-body">
+        <h3><a href="https://github.com/ai-job-search-dev/ai-job-search">ai-job-search-dev/ai-job-search</a></h3>
+        <div class="meta"><span>63.7k stars</span><span>MIT</span><span>Python + Claude Code skills, LaTeX</span></div>
+        <p class="verdict">Borrow the document layout, setup interview and outcome loop.</p>
+        <ul>
+          <li><code>documents/</code> holds CV, LinkedIn export, projects, references and past applications, each with an <code>outcome.md</code>.</li>
+          <li><code>/setup</code> builds your profile from those files or by interviewing you section by section.</li>
+          <li>An <code>application-reviewer</code> agent critiques each draft, and a grounding audit strips anything not in your sources.</li>
+          <li>Job portal search is Danish; swap in JobSpy.</li>
+        </ul></div></article>
+
+      <article class="card"><div class="rank">3</div><div class="card-body">
+        <h3><a href="https://github.com/srbhr/Resume-Matcher">srbhr/Resume-Matcher</a></h3>
+        <div class="meta"><span>28.8k stars</span><span>Apache-2.0</span><span>FastAPI + Next.js + SQLite</span></div>
+        <p class="verdict">Borrow master-resume tailoring and the plain-code ATS check.</p>
+        <ul>
+          <li>One master resume, tailored copies per job. Prompts forbid adding skills, tools, employers or metrics.</li>
+          <li>Skill verification split that career-ops later adapted.</li>
+          <li>ATS score and parse check in <code>services/ats.py</code> and <code>services/ats_parse/</code> make no LLM call.</li>
+          <li>An MCP server lets Claude Code drive tailoring while the app stores and renders.</li>
+        </ul></div></article>
+
+      <article class="card"><div class="rank">4</div><div class="card-body">
+        <h3><a href="https://github.com/speedyapply/JobSpy">speedyapply/JobSpy</a></h3>
+        <div class="meta"><span>4.5k stars</span><span>MIT</span><span>Python library, CLI, MCP server</span></div>
+        <p class="verdict">Use as a dependency for daily sourcing.</p>
+        <ul>
+          <li><code>scrape_jobs(site_name=[...], search_term=..., hours_old=24)</code> returns a DataFrame.</li>
+          <li>Run one search per profile each morning to build the pool for the top 10.</li>
+          <li>LinkedIn rate-limits quickly, so keep result counts low or add proxies.</li>
+        </ul></div></article>
+
+      <article class="card"><div class="rank">5</div><div class="card-body">
+        <h3><a href="https://github.com/DaKheera47/job-ops">DaKheera47/job-ops</a></h3>
+        <div class="meta"><span>4.1k stars</span><span>Commons Clause</span><span>TypeScript, Docker</span></div>
+        <p class="verdict">Read for product shape. Don't fork: the license forbids selling it.</p>
+        <ul>
+          <li>Search, score 0-100, tailor, export and track in one self-hosted UI, with no auto-apply on purpose.</li>
+          <li>Pluggable extractors per job board and Gmail-based status updates.</li>
+        </ul></div></article>
+    </div>
+  </section>
+
+  <section class="reco" aria-labelledby="reco">
+    <h2 id="reco">Recommendation</h2>
+    <p>Don't fork any of them wholesale. Build a small pipeline in resume_pipeline and borrow: JobSpy for sourcing, career-ops' archetypes and fact gates for profiles and truthfulness, Resume-Matcher's tailoring rules, and ai-job-search's document layout and outcome loop. The explicit decision log is new.</p>
+  </section>
+
+  <section class="also" aria-labelledby="also">
+    <h2 id="also" style="color:var(--fg)">Also looked at</h2>
+    <p><a href="https://github.com/reactive-resume/reactive-resume">reactive-resume</a> (44.7k) and <a href="https://github.com/rendercv/rendercv">rendercv</a> (17.8k) build and render resumes but don't match jobs; either could render our CVs. <a href="https://github.com/Pickle-Pixel/ApplyPilot">ApplyPilot</a> (1.7k) applies automatically, which conflicts with approving each role yourself.</p>
+  </section>
+</div>
+
+</body>
+</html>
