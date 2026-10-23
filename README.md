@@ -33,4 +33,4 @@ a tip. Tips are voluntary, there is no paid tier, and tipping unlocks nothing.
 
 <!-- tip-link: replace with the real tip page, and set the same URL in
 .github/FUNDING.yml and data-tip-url in docs/pages/pipeline-mockup.html -->
-Tip link coming soon.
+Tip link coming soon. Setup steps: [docs/tips-setup.md](docs/tips-setup.md).
