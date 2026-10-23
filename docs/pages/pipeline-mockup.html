@@ -113,6 +113,9 @@ th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:upperca
 .log{display:grid;gap:10px}
 .entry{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:4px;font-size:13px}
 .entry pre{margin:0;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted)}
+.tip{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px;font-size:13px;color:var(--muted)}
+.tip a{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--fg);font-weight:600;text-decoration:none}
+.tip a:hover{border-color:var(--accent);color:var(--accent)}
 .empty{color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:8px;padding:14px}
 @media (prefers-reduced-motion: no-preference){.job,.choice,.pf{transition:background .15s,color .15s,border-color .15s}}
 </style>
@@ -153,6 +156,12 @@ th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:upperca
       <div class="log" id="log"></div>
     </section>
   </div>
+
+  <!-- Set data-tip-url to the tip page (Ko-fi, Buy Me a Coffee, GitHub Sponsors...). Empty hides the footer. -->
+  <footer class="tip" id="tip" data-tip-url="" hidden>
+    <span>resume_pipeline is free to use. Tips are optional and unlock nothing.</span>
+    <a id="tip-link" href="#" target="_blank" rel="noopener">Leave a tip</a>
+  </footer>
 </div>
 
 <script>
@@ -312,6 +321,8 @@ document.addEventListener("input", ev=>{
   $("record").disabled = !ok;
   $("rec-hint").textContent = d.decision ? (d.rationale.trim()?"":"Add a rationale to record.") : "Pick a decision and add a rationale.";
 });
+const tip = $("tip"), tipUrl = tip.dataset.tipUrl.trim();
+if(/^https:\/\//.test(tipUrl)){ $("tip-link").href = tipUrl; tip.hidden = false; }
 renderAll();
 </script>
 

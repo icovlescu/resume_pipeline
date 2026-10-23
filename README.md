@@ -26,3 +26,11 @@ The repos are kept as context, not vendored. To read them locally:
 Pinned commits, upstream URLs and our forks are in
 [references/repos.tsv](references/repos.tsv). The script clones from the fork
 when there is one and adds upstream as a second remote.
+
+## Support
+resume_pipeline is free to use and stays free. If it helped you, you can leave
+a tip. Tips are voluntary, there is no paid tier, and tipping unlocks nothing.
+
+<!-- tip-link: replace with the real tip page, and set the same URL in
+.github/FUNDING.yml and data-tip-url in docs/pages/pipeline-mockup.html -->
+Tip link coming soon.
