@@ -1,0 +1,21 @@
+{
+  "name": "resume-pipeline",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal job pipeline: store jobs and CVs in D1, analyse role vs CV, edit proposed CVs and motivation letters, and keep an answer bank for interviews. Cloudflare Worker + D1.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "preview": "node scripts/preview.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "gen:sql": "node scripts/gen-sql.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

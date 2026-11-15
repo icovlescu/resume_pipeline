@@ -80,7 +80,20 @@ Every role gets an explicit decision before any CV is used.
 Stored append-only (`data/decisions.jsonl`), so past rationale can inform later
 ranking.
 
+## Decisions (2026-11-15)
+- **Storage: Cloudflare D1** (`resume-pipeline`), schema in `src/schema.js`.
+  `decisions` is append-only; CV and letter edits are append-only
+  `document_versions`; answers are append-only `answer_versions`.
+- **Interface: web UI** on a Cloudflare Worker at
+  `covlescu.com/project/resume_pipeline`, single owner, password sign-in.
+- **Skills ledger, first version:** the sources are the CVs / LinkedIn / notes
+  in `cvs`, plus answers marked `use_as_evidence` (your confirmation). The fact
+  check (`factCheck` in `src/analysis.js`) flags any skill in a proposal or edit
+  that is in none of them.
+- **Answer bank:** answers are matched to each job's expected questions with
+  TF-IDF on question + tags + answer, plus a bonus for shared skills. You can
+  link the answer you will use; links are kept per analysis.
+
 ## Open questions
-- Storage: plain files (career-ops style) or SQLite from the start?
-- Interface: CLI + Claude Code skills first, or a small web UI like the mockup?
+- Scraping and the daily top 10 (JobSpy) are not built yet; jobs are pasted.
 - Which job boards and countries matter most?

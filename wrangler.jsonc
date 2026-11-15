@@ -1,0 +1,47 @@
+{
+  // Must match the Worker name in the Cloudflare dashboard when you deploy with Workers Builds (Git integration).
+  "name": "resume-pipeline",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+
+  // The web UI lives in ./public/project/resume_pipeline/ (folder path = URL path). Only /api/* runs the Worker;
+  // the static files are served by Cloudflare's asset store for free. Their security headers are in public/_headers.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/project/resume_pipeline/api/*"]
+  },
+
+  // https://covlescu.com/project/resume_pipeline . A route only takes this path; the rest of the site is untouched.
+  "routes": [
+    { "pattern": "covlescu.com/project/resume_pipeline", "zone_name": "covlescu.com" },
+    { "pattern": "covlescu.com/project/resume_pipeline/*", "zone_name": "covlescu.com" }
+  ],
+
+  // Created 2026-11-15 (location hint: Western Europe). The Worker creates its tables on first use.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "resume-pipeline", "database_id": "c8826dd6-0101-408a-b912-8c7713554c40", "migrations_dir": "migrations" }
+  ],
+
+  "vars": {
+    "BASE_PATH": "/project/resume_pipeline",
+    // Claude is used only when the secret ANTHROPIC_API_KEY exists; otherwise the built-in engine runs.
+    "CLAUDE_MODEL": "claude-opus-5-5",
+    "CLAUDE_EFFORT": "medium"
+    // Secrets (Settings → Variables and Secrets, or `wrangler secret put`):
+    //   APP_PASSWORD       required: your sign-in password
+    //   ANTHROPIC_API_KEY  optional: turns on Claude for analysis and proposals
+  },
+
+  "observability": { "enabled": true },
+
+  // Builds of branches other than main use their own empty database, so tests never touch your real data.
+  "previews": {
+    "vars": { "BASE_PATH": "/project/resume_pipeline", "CLAUDE_MODEL": "claude-opus-5-5", "CLAUDE_EFFORT": "medium" },
+    "d1_databases": [
+      { "binding": "DB", "database_name": "resume-pipeline-preview", "database_id": "993a4d47-a35a-4097-abee-6f5de6c850b0", "migrations_dir": "migrations" }
+    ]
+  }
+}

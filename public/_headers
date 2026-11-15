@@ -1,0 +1,8 @@
+# Applies to static files served directly by Cloudflare. Keep the Content-Security-Policy identical to src/csp.js (a test checks this).
+/project/resume_pipeline/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Robots-Tag: noindex
